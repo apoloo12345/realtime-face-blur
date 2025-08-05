@@ -15,8 +15,8 @@ import sys
 
 INPUT_URL = os.getenv("INPUT_URL", "srt://remote_host:port?mode=caller")
 RTMP_URL = "rtmp://127.0.0.1:1935/live/blurred"
-WIDTH = int(os.getenv("INPUT_WIDTH", 1280))
-HEIGHT = int(os.getenv("INPUT_HEIGHT", 720))
+WIDTH = int(os.getenv("INPUT_WIDTH", 1920))
+HEIGHT = int(os.getenv("INPUT_HEIGHT", 1080))
 FPS = int(os.getenv("INPUT_FPS", 30))
 USE_GPU = int(os.getenv("USE_GPU", 0))
 
