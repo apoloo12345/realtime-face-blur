@@ -1,0 +1,20 @@
+services:
+  srt-face-blur:
+    image: srt-face-blur:latest
+    build: .
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+    environment:
+      SRT_URL: "srt://0.0.0.0:9000"
+      INPUT_WIDTH: 1920
+      INPUT_HEIGHT: 1080
+      INPUT_FPS: 30
+      USE_GPU: 1 # Set to 0 if NVIDIA GPU Support is not enabled
+    # Comment all following lines out if GPU Support is not enabled
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
