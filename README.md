@@ -1,11 +1,11 @@
-# SRT Face Blur with Docker
+# Realtime Face Blur with Docker
 
 This project provides a Dockerized solution for real-time face blurring in video streams using OpenCV and FFmpeg. It includes an integrated NGINX-RTMP server to serve the processed video stream. The application supports both CPU and NVIDIA GPU acceleration for face detection and processing.
 
 ## Features
 
 - **Real-time face blurring**: Detects and blurs faces in video streams.
-- **SRT input support**: Accepts Secure Reliable Transport (SRT) streams as input.
+- **Multiple input support**: Accepts Secure Reliable Transport (SRT), RTMP, HTTP and HTTPS streams as input.
 - **RTMP output**: Streams the processed video to an RTMP server.
 - **GPU acceleration**: Optional NVIDIA GPU support for faster face detection.
 - **Integrated NGINX-RTMP server**: Serves the processed stream locally.
@@ -22,7 +22,7 @@ This project provides a Dockerized solution for real-time face blurring in video
 
 ```bash
 git clone <repository-url>
-cd srt-face-blur
+cd realtime-face-blur
 ```
 
 ### 2. Build the Docker Image

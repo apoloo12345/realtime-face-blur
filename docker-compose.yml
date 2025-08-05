@@ -1,12 +1,12 @@
 services:
-  srt-face-blur:
-    image: srt-face-blur:latest
+  realtime-face-blur:
+    image: realtime-face-blur:latest
     build: .
     ports:
       - "1935:1935"
       - "8080:8080"
     environment:
-      SRT_URL: "srt://remote_host:port?mode=caller"
+      INPUT_URL: "srt://remote_host:port?mode=caller"
       INPUT_WIDTH: 1920
       INPUT_HEIGHT: 1080
       INPUT_FPS: 30

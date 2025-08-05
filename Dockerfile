@@ -1,6 +1,6 @@
 FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04
 
-ENV SRT_URL=srt://remote_host:port?mode=caller
+ENV INPUT_URL=srt://remote_host:port?mode=caller
 ENV INPUT_WIDTH=1920
 ENV INPUT_HEIGHT=1080
 ENV INPUT_FPS=30
