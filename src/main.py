@@ -1,4 +1,4 @@
-# Dockerized Python Script with Integrated NGINX-RTMP Server for SRT Face Blur (CPU/GPU Support + Flexible Input)
+# Dockerized Python Script with Integrated NGINX-RTMP Server for Realtime Face Blur (CPU/GPU Support + Flexible Input)
 # ------------------------------------------------------------------------------------------------------------
 # This container:
 # 1. Runs an NGINX server with RTMP module to serve the processed stream.
