@@ -1,10 +1,11 @@
-# Dockerized Python Script with Integrated NGINX-RTMP Server for SRT Face Blur (CPU/GPU Support)
-# --------------------------------------------------------------------------------------------
+# Dockerized Python Script with Integrated NGINX-RTMP Server for SRT Face Blur (CPU/GPU Support + Flexible Input)
+# ------------------------------------------------------------------------------------------------------------
 # This container:
 # 1. Runs an NGINX server with RTMP module to serve the processed stream.
-# 2. Listens to an SRT input stream, blurs detected faces, and pushes to the local RTMP server.
-# 3. Supports both CPU and GPU for face detection based on the USE_GPU environment variable.
-# 4. OBS can access the stream at rtmp://<host>:1935/live/blurred
+# 2. Fetches an input stream from SRT (caller/listener), RTMP, or HTTP source.
+# 3. Blurs detected faces and pushes the processed stream to the local RTMP server.
+# 4. Supports both CPU and GPU for face detection based on the USE_GPU environment variable.
+# 5. OBS can access the processed stream at rtmp://<host>:1935/live/blurred
 
 import cv2
 import numpy as np
@@ -12,7 +13,7 @@ import subprocess
 import os
 import sys
 
-SRT_URL = os.getenv("SRT_URL", "srt://0.0.0.0:9000")
+INPUT_URL = os.getenv("INPUT_URL", "srt://remote_host:port?mode=caller")
 RTMP_URL = "rtmp://127.0.0.1:1935/live/blurred"
 WIDTH = int(os.getenv("INPUT_WIDTH", 1280))
 HEIGHT = int(os.getenv("INPUT_HEIGHT", 720))
@@ -44,16 +45,25 @@ else:
 nginx_conf = "/etc/nginx/nginx.conf"
 subprocess.Popen(["nginx", "-c", nginx_conf])
 
-# Start FFmpeg to pull SRT input as rawvideo
-ffmpeg_in = [
-    "ffmpeg", "-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "5",
-    "-i", SRT_URL,
-    "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{WIDTH}x{HEIGHT}", "-"
-]
+# Adjust ffmpeg input options based on protocol
+def get_input_command(url):
+    if url.startswith("srt://"):
+        if "mode=" not in url:
+            url += ("&" if "?" in url else "?") + "mode=caller"
+        return ["ffmpeg", "-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "5", "-i", url,
+                "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{WIDTH}x{HEIGHT}", "-"]
+    elif url.startswith("rtmp://") or url.startswith("http://") or url.startswith("https://"):
+        return ["ffmpeg", "-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "5", "-i", url,
+                "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{WIDTH}x{HEIGHT}", "-"]
+    else:
+        print(f"[ERROR] Unsupported protocol in URL: {url}", file=sys.stderr)
+        sys.exit(1)
+
+ffmpeg_in = get_input_command(INPUT_URL)
 try:
     p_in = subprocess.Popen(ffmpeg_in, stdout=subprocess.PIPE, bufsize=10**8)
 except Exception as e:
-    print(f"[ERROR] Failed to start FFmpeg SRT input: {e}", file=sys.stderr)
+    print(f"[ERROR] Failed to start FFmpeg input: {e}", file=sys.stderr)
     sys.exit(1)
 
 # Start FFmpeg to push processed output to the local RTMP server
@@ -74,7 +84,7 @@ frame_size = WIDTH * HEIGHT * 3
 while True:
     raw_frame = p_in.stdout.read(frame_size)
     if not raw_frame or len(raw_frame) != frame_size:
-        print("[WARN] SRT stream interrupted or ended, retrying...", file=sys.stderr)
+        print("[WARN] Input stream interrupted or ended, retrying...", file=sys.stderr)
         break
     frame = np.frombuffer(raw_frame, np.uint8).reshape((HEIGHT, WIDTH, 3))
 
