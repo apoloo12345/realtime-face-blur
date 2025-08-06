@@ -1,5 +1,7 @@
 # Realtime Face Blur with Docker
 
+## This is not working yet!
+
 This project provides a Dockerized solution for real-time face blurring in video streams using OpenCV and FFmpeg. It includes an integrated NGINX-RTMP server to serve the processed video stream. The application supports both CPU and NVIDIA GPU acceleration for face detection and processing.
 
 ## Features
@@ -51,13 +53,13 @@ You can use OBS or any RTMP-compatible client to view the stream.
 
 The following environment variables can be configured in the `docker-compose.yml` file:
 
-| Variable       | Default Value         | Description                                                                 |
-|----------------|-----------------------|-----------------------------------------------------------------------------|
-| `INPUT_URL`      | `srt://remote_host:port?mode=caller` | Input Source. Can be SRT (default mode caller), rtmp, http or https.                                                      |
-| `INPUT_WIDTH`  | `1920`               | Width of the input video stream.                                           |
-| `INPUT_HEIGHT` | `1080`               | Height of the input video stream.                                          |
-| `INPUT_FPS`    | `30`                 | Frames per second of the input video stream.                               |
-| `USE_GPU`      | `0`                  | Set to `1` to enable NVIDIA GPU acceleration (requires GPU support).       |
+| Variable       | Default Value                                     | Description                                                                                            |
+|----------------|---------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `INPUT_URL`    | `srt://host:port?streamid=play/stream/streamkey`  | Input Source. Can be SRT (default mode caller), rtmp, http or https.                                   |
+| `INPUT_WIDTH`  | `1920`                                            | Width of the input video stream.                                                                       |
+| `INPUT_HEIGHT` | `1080`                                            | Height of the input video stream.                                                                      |
+| `INPUT_FPS`    | `30`                                              | Frames per second of the input video stream.                                                           |
+| `USE_GPU`      | `0`                                               | Set to `1` to enable NVIDIA GPU acceleration (requires GPU support).                                   |
 
 ## File Structure
 

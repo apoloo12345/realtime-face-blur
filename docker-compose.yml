@@ -17,4 +17,5 @@ services:
         reservations:
           devices:
             - capabilities: [gpu]
+    # Also comment this line out if GPU Support is not enabled
     runtime: nvidia
